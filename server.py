@@ -1,7 +1,8 @@
-import boto3
 import json
 import logging
 import traceback
+
+import boto3 as aws
 
 from botocore.exceptions import ClientError
 from datetime import datetime, timezone
@@ -36,12 +37,7 @@ def save_data(data):
             bucket.wait_until_exists()
             
     except ClientError as error:
-        
-        logging.error(
-            "Couldn't put object '%s' to bucket '%s'.",
-            bucket.key,
-            bucket.bucket_name,
-        )
+        logging.error(traceback.format_exc()[:-1].replace("  ", "\t").replace("\n", "\n\t\t"))
     
 
 if __name__ == '__main__':
@@ -59,9 +55,7 @@ if __name__ == '__main__':
     )
     
     try:
-        s3 = boto3.resource('s3')
-        
-        bucket = s3.Bucket(config['bucket_name'])
+        bucket = aws.resource('s3').Bucket(config['bucket_name'])
             
         server_address = ('', config['port'])
         
