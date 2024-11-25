@@ -3,6 +3,8 @@ import json
 import logging
 import traceback
 
+from botocore.exceptions import ClientError
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class S(BaseHTTPRequestHandler):
@@ -16,8 +18,23 @@ class S(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = post_data.decode()
         self._set_response()
-
+        
+        save_data(data)
+        
+        logging.debug(post_data)
         logging.debug("POST request data"+ data)
+
+def save_data(data):
+    try:
+            bucket.put_object(Body=data, Key=datetime.now(timezone.utc))
+            bucket.wait_until_exists()
+    except ClientError as error:
+        logging.exception(
+            "Couldn't put object '%s' to bucket '%s'.",
+            bucket.key,
+            bucket.bucket_name,
+        )
+        raise ClientError from error
 
     
 
@@ -38,7 +55,9 @@ if __name__ == '__main__':
     try:
         s3 = boto3.resource('s3')
         
-        bucket = config['bucket_name']
+        bucket = s3.Bucket(config['bucket_name'])
+
+        save_data("12")
             
         server_address = ('', config['port'])
         
