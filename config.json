@@ -1,0 +1,5 @@
+{
+    "logging_file": "logging.log",
+    "bucket_name": "iot-server-group1",
+    "port": "8080",
+}

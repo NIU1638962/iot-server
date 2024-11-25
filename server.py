@@ -1,5 +1,8 @@
+import boto3
+import json
 import logging
 import traceback
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class S(BaseHTTPRequestHandler):
@@ -19,10 +22,13 @@ class S(BaseHTTPRequestHandler):
     
 
 if __name__ == '__main__':
+    with open("config.json", "r") as config_file:
+        config = json.load(config_file)
+        
     logging
 
     logging.basicConfig(
-        filename="logging.log",
+        filename=config['logging_file'],
         filemode="w",
         level=logging.DEBUG,
         force=True,
@@ -30,7 +36,11 @@ if __name__ == '__main__':
     )
     
     try:
-        server_address = ('', 8080)
+        s3 = boto3.resource('s3')
+        
+        bucket = config['bucket_name']
+            
+        server_address = ('', config['port'])
         
         httpd = HTTPServer(server_address, S)
         
