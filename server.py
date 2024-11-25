@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+
 class S(BaseHTTPRequestHandler):
     def _set_response(self):
         self.send_response(200)
@@ -24,18 +25,23 @@ class S(BaseHTTPRequestHandler):
         logging.debug(post_data)
         logging.debug("POST request data"+ data)
 
+
 def save_data(data):
     try:
-            bucket.put_object(Body=data, Key=datetime.now(timezone.utc))
+            logging.info("Saving data to S3 Bucket.")
+            
+            logging.debug(datetime.now(timezone.utc))
+            
+            bucket.put_object(Body=data, Key=str(datetime.now(timezone.utc)))
             bucket.wait_until_exists()
+            
     except ClientError as error:
-        logging.exception(
+        
+        logging.error(
             "Couldn't put object '%s' to bucket '%s'.",
             bucket.key,
             bucket.bucket_name,
         )
-        raise ClientError from error
-
     
 
 if __name__ == '__main__':
@@ -56,8 +62,6 @@ if __name__ == '__main__':
         s3 = boto3.resource('s3')
         
         bucket = s3.Bucket(config['bucket_name'])
-
-        save_data("12")
             
         server_address = ('', config['port'])
         
