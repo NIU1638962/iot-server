@@ -29,12 +29,14 @@ class S(BaseHTTPRequestHandler):
 
 def save_data(data):
     try:
-            logging.info("Saving data to S3 Bucket.")
+        logging.info("Saving data to S3 Bucket.")
             
-            logging.debug(datetime.now(timezone.utc))
+        logging.debug(datetime.now(timezone.utc))
             
-            bucket.put_object(Body=data, Key=str(datetime.now(timezone.utc)))
-            bucket.wait_until_exists()
+        name = "data/" + str(datetime.now(timezone.utc))
+            
+        bucket.put_object(Body=data, Key=name)
+        bucket.wait_until_exists()
             
     except ClientError as error:
         logging.error(traceback.format_exc()[:-1].replace("  ", "\t").replace("\n", "\n\t\t"))
