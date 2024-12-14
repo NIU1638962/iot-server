@@ -1,0 +1,404 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="./Lyne.js"></script>
+  <script src="http://code.jquery.com/jquery-2.0.0b2.js"></script>
+  <title>Air Quality</title>
+</head>
+<body>
+  <div style = "position:absolute;left:1%;top:5%;bottom:5%;right:5%;max-height: 200;max-width: 45%;">
+    <canvas id="Temp" width="500" height="200"></canvas>
+  </div>
+
+  <div style = "position:absolute;left:50%;top:5%;bottom:5%;right:5%;max-height: 200;max-width: 50%;">
+    <canvas id="Hum" width="500" height="200"></canvas>
+  </div>
+
+  <div style = "position:absolute;left:1%;top:30%;bottom:5%;right:5%;max-height: 200;max-width: 45%;">
+    <canvas id="VOC" width="500" height="200"></canvas>
+  </div>
+
+  <div style = "position:absolute;left:50%;top:30%;bottom:5%;right:5%;max-height: 200;max-width: 50%;">
+    <canvas id="PM1" width="500" height="200"></canvas>
+  </div>
+
+  <div style = "position:absolute;left:1%;top:60%;bottom:5%;right:5%;max-height: 200;max-width: 45%;">
+    <canvas id="PM2.5" width="500" height="200"></canvas>
+  </div>
+
+  <div style = "position:absolute;left:50%;top:60%;bottom:5%;right:5%;max-height: 200;max-width: 50%;">
+    <canvas id="PM10" width="500" height="200"></canvas>
+  </div>
+
+
+</body>
+<script>
+  var Options = {
+    xyAxisStrokeStyle : '#FFF',
+    xyAxisLineWidth : 20,
+    /*-------------------------------------*/
+    yAxisLabelTextShadowStrokeStyle : "transparent",
+    yAxisLabelTextShadowOffsetY : 1,
+    yAxisLabelStrokeStyle : "#777",
+    yAxisLabelFontSize : "12px",
+    yAxisLabelFontWeight : "300",
+    yAxisLabelFontFamily : "'Proxima Nova'",
+    yAxisGridSpacingMin : 10,
+    yAxisGridSpacingMax : 10,
+    yAxisGridStrokeStyle : "rgba(255,255,255, 0.03)",
+    yAxisGridLineWidth : 1,
+    /*-------------------------------------*/
+    xAxisLabelTextShadowStrokeStyle : "transparent",
+    xAxisLabelTextShadowOffsetY : 1,
+    xAxisGridStrokeStyle : "rgba(255,255,255, 0.03)",
+    xAxisGridLineWidth : 1,
+    xAxisLabelStrokeStyle : "#777",
+    xAxisLabelFontSize : "0px",
+    xAxisLabelFontWeight : "300",
+    xAxisLabelFontFamily : "'Proxima Nova'",
+    /*-------------------------------------*/
+    plotPointStrokeStyle : '#222',
+    plotPointFillStyle : '#FFF',
+    plotPointLineWidth : 8,
+    plotPointRadius : 3,
+    /*-------------------------------------*/
+    plotAreaFillGradientStyle : 1, // { 1 : vertical } { 0 : horizontal }
+    plotAreaStrokeColorStart : '#FFF',
+    plotAreaStrokeColorStop : '#FFF',
+    plotAreaFillColorStart : '#111',
+    plotAreaFillColorStop : '#333',
+    plotAreaLineWidth : 3,
+    /*-------------------------------------*/
+    canvasPadding : 50,
+    /*-------------------------------------*/
+    debugVarTweener : false,
+    debugVarTweenerLabelTextShadowStrokeStyle : "transparent",
+    debugVarTweenerLabelTextShadowOffsetY : 1,
+    debugVarTweenerLabelStrokeStyle : "#555",
+    debugVarTweenerLabelFontSize : "10px",
+    debugVarTweenerLabelFontWeight : "bold",
+    debugVarTweenerLabelFontFamily : "'Proxima Nova'",
+    /*-------------------------------------*/
+    debugAboutLyne : false,
+    debugAboutLyneLabelTextShadowStrokeStyle : "transparent",
+    debugAboutLyneLabelTextShadowOffsetY : 1,
+    debugAboutLyneLabelStrokeStyle : "#777",
+    debugAboutLyneLabelFontSize : "10px",
+    debugAboutLyneLabelFontWeight : "bold",
+    debugAboutLyneLabelFontFamily : "'Proxima Nova'",
+    /*-------------------------------------*/
+    animationTime : 1800,
+    animationYStartStretch : 0,
+    animationXStartStretch : 2,
+    animationClearQueue : true
+};
+  //Peticio de les dades
+  init = async function () {
+    var response = await fetch("http://localhost:8080/getData");
+    var json_response = await response.json()
+
+
+    var temp_data = json_response['Temp'].slice(Math.max(json_response['Temp'].length - 20, 1))
+    var hum_data = json_response['Hum'].slice(Math.max(json_response['Hum'].length - 20, 1))
+    var voc_data = json_response['VOC'].slice(Math.max(json_response['VOC'].length - 20, 1))
+    var pm1_data = json_response['PM1'].slice(Math.max(json_response['PM1'].length - 20, 1))
+    var pm25_data = json_response['PM2.5'].slice(Math.max(json_response['PM2.5'].length - 20, 1))
+    var pm10_data = json_response['PM10'].slice(Math.max(json_response['PM10'].length - 20, 1))
+    console.log(temp_data)
+    temp = new Lyne.Graph(temp_data, document.getElementById("Temp"), Options)
+    hum = new Lyne.Graph(hum_data, document.getElementById("Hum"), Options)
+    voc = new Lyne.Graph(voc_data, document.getElementById("VOC"), Options)
+    pm1 = new Lyne.Graph(pm1_data, document.getElementById("PM1"), Options)
+    pm25 = new Lyne.Graph(pm25_data, document.getElementById("PM2.5"), Options)
+    pm10 = new Lyne.Graph(pm10_data, document.getElementById("PM10"), Options)
+
+  }
+
+  async function update(){
+    var response = await fetch("http://localhost:8080/getData");
+    var json_response = await response.json()
+
+
+    var temp_data = json_response['Temp'].last()
+    var hum_data = json_response['Hum'].last()
+    var voc_data = json_response['VOC'].last()
+    var pm1_data = json_response['PM1'].last()
+    var pm25_data = json_response['PM2.5'].last()
+    var pm10_data = json_response['PM10'].last()
+    console.log(voc_data)
+     temp.dataQueue(temp_data)
+     hum.dataQueue(hum_data)
+     voc.dataQueue(voc_data)
+     pm1.dataQueue(pm1_data)
+     pm25.dataQueue(pm25_data)
+     pm10.dataQueue(pm10_data)
+
+  }
+  
+  init()
+
+  setInterval(update, 1000)
+  
+</script>
+<!--script>
+  function LineChart(con) {
+      // user defined properties
+      this.canvas = document.getElementById(con.canvasId);
+      this.minX = con.minX;
+      this.minY = con.minY;
+      this.maxX = con.maxX;
+      this.maxY = con.maxY;
+      this.unitsPerTickX = con.unitsPerTickX;
+      this.unitsPerTickY = con.unitsPerTickY;
+
+      // constants
+      this.padding = 10;
+      this.tickSize = 10;
+      this.axisColor = "#555";
+      this.pointRadius = 5;
+      this.font = "12pt Calibri";
+
+      this.fontHeight = 12;
+
+      // relationships
+      this.context = this.canvas.getContext("2d");
+      this.rangeX = this.maxX - this.minY;
+      this.rangeY = this.maxY - this.minY;
+      this.numXTicks = Math.round(this.rangeX / this.unitsPerTickX);
+      this.numYTicks = Math.round(this.rangeY / this.unitsPerTickY);
+      this.x = this.getLongestValueWidth() + this.padding * 2;
+      this.y = this.padding * 2;
+      this.width = this.canvas.width - this.x - this.padding * 2;
+      this.height = this.canvas.height - this.y - this.padding - this.fontHeight;
+      this.scaleX = this.width / this.rangeX;
+      this.scaleY = this.height / this.rangeY;
+
+      // draw x y axis and tick marks
+      this.drawXAxis();
+      this.drawYAxis();
+  }
+
+  LineChart.prototype.getLongestValueWidth = function () {
+      this.context.font = this.font;
+      var longestValueWidth = 0;
+      for (var n = 0; n <= this.numYTicks; n++) {
+          var value = this.maxY - (n * this.unitsPerTickY);
+          longestValueWidth = Math.max(longestValueWidth, this.context.measureText(value).width);
+      }
+      return longestValueWidth;
+  };
+
+  LineChart.prototype.drawXAxis = function () {
+      var context = this.context;
+      context.save();
+      context.beginPath();
+      context.moveTo(this.x, this.y + this.height);
+      context.lineTo(this.x + this.width, this.y + this.height);
+      context.strokeStyle = this.axisColor;
+      context.lineWidth = 2;
+      context.stroke();
+
+      // draw tick marks
+      for (var n = 0; n < this.numXTicks; n++) {
+          context.beginPath();
+          context.moveTo((n + 1) * this.width / this.numXTicks + this.x, this.y + this.height);
+          context.lineTo((n + 1) * this.width / this.numXTicks + this.x, this.y + this.height - this.tickSize);
+          context.stroke();
+      }
+
+      // draw labels
+      context.font = this.font;
+      context.fillStyle = "black";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+
+      for (var n = 0; n < this.numXTicks; n++) {
+          var label = Math.round((n + 1) * this.maxX / this.numXTicks);
+          context.save();
+          context.translate((n + 1) * this.width / this.numXTicks + this.x, this.y + this.height + this.padding);
+          context.fillText(label, 0, 0);
+          context.restore();
+      }
+      context.restore();
+  };
+
+  LineChart.prototype.drawYAxis = function () {
+      var context = this.context;
+      context.save();
+      context.save();
+      context.beginPath();
+      context.moveTo(this.x, this.y);
+      context.lineTo(this.x, this.y + this.height);
+      context.strokeStyle = this.axisColor;
+      context.lineWidth = 2;
+      context.stroke();
+      context.restore();
+
+      // draw tick marks
+      for (var n = 0; n < this.numYTicks; n++) {
+          context.beginPath();
+          context.moveTo(this.x, n * this.height / this.numYTicks + this.y);
+          context.lineTo(this.x + this.tickSize, n * this.height / this.numYTicks + this.y);
+          context.stroke();
+      }
+
+      // draw values
+      context.font = this.font;
+      context.fillStyle = "black";
+      context.textAlign = "right";
+      context.textBaseline = "middle";
+
+      for (var n = 0; n < this.numYTicks; n++) {
+          var value = Math.round(this.maxY - n * this.maxY / this.numYTicks);
+          context.save();
+          context.translate(this.x - this.padding, n * this.height / this.numYTicks + this.y);
+          context.fillText(value, 0, 0);
+          context.restore();
+      }
+      context.restore();
+  };
+
+  LineChart.prototype.drawLine = function (data, color, width) {
+      var context = this.context;
+      context.save();
+      this.transformContext();
+      context.lineWidth = width;
+      context.strokeStyle = color;
+      context.fillStyle = color;
+      context.beginPath();
+      context.moveTo(data[0].x * this.scaleX, data[0].y * this.scaleY);
+
+      for (var n = 0; n < data.length; n++) {
+          var point = data[n];
+
+          // draw segment
+          context.lineTo(point.x * this.scaleX, point.y * this.scaleY);
+          context.stroke();
+          context.closePath();
+        //   context.beginPath();
+        //   context.arc(point.x * this.scaleX, point.y * this.scaleY, this.pointRadius, 0, 2 * Math.PI, false);
+        //   context.fill();
+        //   context.closePath();
+
+          // position for next segment
+          context.beginPath();
+          context.moveTo(point.x * this.scaleX, point.y * this.scaleY);
+      }
+      context.restore();
+  };
+
+  LineChart.prototype.transformContext = function () {
+      var context = this.context;
+
+      // move context to center of canvas
+      this.context.translate(this.x, this.y + this.height);
+
+      // invert the y scale so that that increments
+      // as you move upwards
+      context.scale(1, -1);
+  };
+
+  update_graph = async function () {
+      var voc = new LineChart({
+          canvasId: "VOC",
+          minX: 0,
+          minY: 0,
+          maxX: 100,
+          maxY: 10,
+          unitsPerTickX: 10,
+          unitsPerTickY: 10
+      });
+
+      var temp = new LineChart({
+          canvasId: "Temp",
+          minX: 0,
+          minY: 0,
+          maxX: 140,
+          maxY: 100,
+          unitsPerTickX: 10,
+          unitsPerTickY: 10
+      });
+
+      var pm1 = new LineChart({
+          canvasId: "PM1",
+          minX: 0,
+          minY: 0,
+          maxX: 140,
+          maxY: 1000,
+          unitsPerTickX: 10,
+          unitsPerTickY: 100
+      });
+
+      var hum = new LineChart({
+          canvasId: "Hum",
+          minX: 0,
+          minY: 0,
+          maxX: 140,
+          maxY: 100,
+          unitsPerTickX: 10,
+          unitsPerTickY: 10
+      });
+
+      var pm25 = new LineChart({
+          canvasId: "PM2.5",
+          minX: 0,
+          minY: 0,
+          maxX: 140,
+          maxY: 2000,
+          unitsPerTickX: 10,
+          unitsPerTickY: 200
+      });
+
+      var pm10 = new LineChart({
+          canvasId: "PM10",
+          minX: 0,
+          minY: 0,
+          maxX: 140,
+          maxY: 3000,
+          unitsPerTickX: 10,
+          unitsPerTickY: 200
+      });
+      //Peticio de les dades
+      var response = await fetch("http://localhost:8080/getData");
+      var json_response = await response.json()
+
+      var temp_data = json_response['Temp']
+      var hum_data = json_response['Hum']
+      var voc_data = json_response['VOC']
+      var pm1_data = json_response['PM1']
+      var pm25_data = json_response['PM2.5']
+      var pm10_data = json_response['PM10']
+      
+      var voc_plot = voc_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      var temp_plot = temp_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      var hum_plot = hum_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      var pm1_plot = pm1_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      var pm25_plot = pm25_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      var pm10_plot = pm10_data.map((element, index) => {
+        return {x: index, y:element};
+      });
+      console.log(pm1_plot);
+      
+      voc.drawLine(voc_plot, "blue", 1);
+      temp.drawLine(temp_plot, "blue", 1);
+      hum.drawLine(hum_plot, "blue", 1);
+      pm1.drawLine(pm1_plot, "blue", 1);
+      pm25.drawLine(pm25_plot, "blue", 1);
+      pm10.drawLine(pm10_plot, "blue", 1);
+  };
+  update_graph()
+  var interval_id = window.setInterval(update_graph, 100000)
+</script-->
+
+</html>
