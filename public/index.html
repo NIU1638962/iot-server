@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="./Lyne.js"></script>
+  <script src="./lyne"></script>
   <script src="http://code.jquery.com/jquery-2.0.0b2.js"></script>
   <title>Air Quality</title>
 </head>
@@ -112,7 +112,7 @@
 };
   //Peticio de les dades
   init = async function () {
-    var response = await fetch("/getData");
+    var response = await fetch("/get-data");
     var json_response = await response.json()
 
 
@@ -133,7 +133,7 @@
   }
 
   async function update(){
-    var response = await fetch("/getData");
+    var response = await fetch("/get-data");
     var json_response = await response.json()
 
 
