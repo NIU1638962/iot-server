@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Stop container."
 echo "Checking if server container exists and running."
 output=$(docker container ls -f status=running -f name=server -a | tail +2 | head -1 | wc -m)
 

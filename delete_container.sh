@@ -2,6 +2,7 @@
 echo "Execute stop."
 bash stop_container.sh
 
+echo "Remove container."
 echo "Checking if server container exists and stopped."
 output=$(docker container ls -f status=exited -f name=server -a | tail -n +2 | head -1 | wc -m)
 
