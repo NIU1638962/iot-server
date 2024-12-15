@@ -5,7 +5,7 @@ WORKDIR /server
 COPY requirements.txt /server
 RUN pip3 install -r requirements.txt
 COPY server.py /server
-COPY config.json /server
+COPY database.py /server
 COPY airQ.db /server
 RUN mkdir -p /server/public
 COPY public/index.html /server/public
