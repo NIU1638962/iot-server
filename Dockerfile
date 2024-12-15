@@ -12,4 +12,4 @@ COPY public/index.html /server/public
 COPY public/Lyne.js /server/public
 RUN chmod 744 /server/server.py
 EXPOSE 8080
-ENTRYPOINT ["python3", "/server/server.py"]
+ENTRYPOINT ["python3", "-u", "/server/server.py"]
