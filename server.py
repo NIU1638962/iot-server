@@ -97,7 +97,7 @@ class Server(BaseHTTPRequestHandler):
         None.
 
         """
-        if self.path == '/favico.ico':
+        if self.path == '/favicon.ico':
             self.send_response(204)
             self.end_headers()
 
