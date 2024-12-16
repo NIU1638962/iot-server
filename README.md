@@ -109,7 +109,7 @@ Python script with the HTTP server. It binds to `0.0.0.0` and the port `8080`. L
 The server has:
  - `/`: the home page that shows the real-time graphs of data. 
  - `/get-data`: Page that retrieves all air data from the database for the graphs or to locally download it.
- - `/Lyne.js`: Script for the real-time graphs.
+ - `/lyne`: Script for the real-time graphs.
  - `/favicon.ico`: For the browser request icons.
 
 Any other page will redirect to the home page.
