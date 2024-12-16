@@ -5,6 +5,8 @@ The server is planned to connect to a SQLite database to store the data.
 
 The server works deploying a Docker container. And launching the server in it, using the port `8080`.
 
+The process of public IP, DNS set up and machine deployment is left to the end user, is not provided here.
+
 Here we can see an example of the frontend:
 ![Image of the front end of the WebPage provided by the server](images/frontend.png)
 
