@@ -112,7 +112,7 @@ The server has:
 
 Any other page will redirect to the home page.
 
-It aslo accpets the data from the edge device and sents it into the Database.
+It also accepts the data from the edge device and sents it into the Database.
 
 ### `database.py`
 Python script with the SQLite database connection. It handles the request of retriving data made by the server and the request of saving data also made by the server when it reives it from the edge device.
